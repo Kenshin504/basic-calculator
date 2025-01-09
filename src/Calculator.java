@@ -390,19 +390,21 @@ public class Calculator extends javax.swing.JFrame {
             processCurrentNumber();
             textField.setText(text + "+");
         }
-        ch = 1;
+        else if (isOperator(text.charAt(text.length() - 1)))
+            textField.setText(text.substring(0, text.length() - 1) + "+");
+
+        ch = 1; 
     }//GEN-LAST:event_jButtonAdd1ActionPerformed
 
     private void jButtonSubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubActionPerformed
         String text = textField.getText();
-        
         if (text.isEmpty() || !isOperator(text.charAt(text.length() - 1))) {
             processCurrentNumber();
             textField.setText(text + "-");
-        } else if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
-            processCurrentNumber();
-            textField.setText(text + "-");
-        }
+        } 
+        else if (isOperator(text.charAt(text.length() - 1)))
+            textField.setText(text.substring(0, text.length() - 1) + "-");
+            
         ch = 2;
     }//GEN-LAST:event_jButtonSubActionPerformed
 
@@ -412,6 +414,8 @@ public class Calculator extends javax.swing.JFrame {
             processCurrentNumber();
             textField.setText(text + "x");
         }
+        else if (isOperator(text.charAt(text.length() - 1)))
+            textField.setText(text.substring(0, text.length() - 1) + "x");
         ch = 3;
     }//GEN-LAST:event_jButtonMulActionPerformed
 
@@ -421,6 +425,9 @@ public class Calculator extends javax.swing.JFrame {
             processCurrentNumber();
             textField.setText(text + "/");
         }
+        else if (isOperator(text.charAt(text.length() - 1)))
+            textField.setText(text.substring(0, text.length() - 1) + "/");
+
         ch = 4;
     }//GEN-LAST:event_jButtonDivActionPerformed
 
