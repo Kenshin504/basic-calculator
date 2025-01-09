@@ -386,49 +386,61 @@ public class Calculator extends javax.swing.JFrame {
 
     private void jButtonAdd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdd1ActionPerformed
         String text = textField.getText();
+
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
             processCurrentNumber();
             textField.setText(text + "+");
         }
-        else if (isOperator(text.charAt(text.length() - 1)))
+        else if (!text.isEmpty() && isOperator(text.charAt(text.length() - 1))) {
             textField.setText(text.substring(0, text.length() - 1) + "+");
+        }
 
-        ch = 1; 
+        ch = 1;
     }//GEN-LAST:event_jButtonAdd1ActionPerformed
 
     private void jButtonSubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubActionPerformed
         String text = textField.getText();
-        if (text.isEmpty() || !isOperator(text.charAt(text.length() - 1))) {
+    
+        if (text.isEmpty()) {
+            textField.setText("-");
+        }
+        else if (!isOperator(text.charAt(text.length() - 1))) {
             processCurrentNumber();
             textField.setText(text + "-");
         } 
-        else if (isOperator(text.charAt(text.length() - 1)))
+        else if (isOperator(text.charAt(text.length() - 1))) {
             textField.setText(text.substring(0, text.length() - 1) + "-");
-            
+        }
+
         ch = 2;
     }//GEN-LAST:event_jButtonSubActionPerformed
 
     private void jButtonMulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMulActionPerformed
         String text = textField.getText();
+    
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
             processCurrentNumber();
             textField.setText(text + "x");
         }
-        else if (isOperator(text.charAt(text.length() - 1)))
+        else if (!text.isEmpty() && isOperator(text.charAt(text.length() - 1))) {
             textField.setText(text.substring(0, text.length() - 1) + "x");
+        }
+
         ch = 3;
     }//GEN-LAST:event_jButtonMulActionPerformed
 
     private void jButtonDivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDivActionPerformed
-        String text = textField.getText();
+    String text = textField.getText();
+    
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
             processCurrentNumber();
             textField.setText(text + "/");
         }
-        else if (isOperator(text.charAt(text.length() - 1)))
+        else if (!text.isEmpty() && isOperator(text.charAt(text.length() - 1))) {
             textField.setText(text.substring(0, text.length() - 1) + "/");
+        }
 
-        ch = 4;
+        ch = 4; 
     }//GEN-LAST:event_jButtonDivActionPerformed
 
     private void jButtonDotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDotActionPerformed
