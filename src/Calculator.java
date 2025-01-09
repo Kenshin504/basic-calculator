@@ -8,6 +8,13 @@ import javax.swing.JButton;
 import javax.swing.UIManager;
 
 public class Calculator extends javax.swing.JFrame {
+    private String expression;
+    private String temp;
+    private double total = 0;
+    private double op1 = 0;
+    private double tempOp;
+    private int ch;
+    
     
     public Calculator() {
         initComponents();
@@ -17,7 +24,79 @@ public class Calculator extends javax.swing.JFrame {
     }
     
     private boolean isOperator(char c) {
-    return c == '+' || c == '-' || c == 'x' || c == '/';
+        return c == '+' || c == '-' || c == 'x' || c == '/';
+    }
+    
+    private boolean hasDotInCurrentNumber(String text) {
+        int lastOperatorIndex = -1;
+        for (int i = text.length() - 1; i >= 0; i--) {
+            if (isOperator(text.charAt(i))) {
+                lastOperatorIndex = i;
+                break;
+            }
+        }
+
+        String currentNumber = text.substring(lastOperatorIndex + 1);
+
+        return currentNumber.contains(".");
+    }
+    
+    private boolean isValidForDot(String text) {
+        char lastChar = text.charAt(text.length() - 1);
+        return !isOperator(lastChar);
+    }
+    
+    
+    private String getLastNumber(String text) {
+        int lastOperatorIndex = -1;
+        for (int i = text.length() - 1; i >= 0; i--) {
+            if (isOperator(text.charAt(i))) {
+                lastOperatorIndex = i;
+                break;
+            }
+        }
+        return lastOperatorIndex == -1 ? text : text.substring(lastOperatorIndex + 1);
+    }
+    
+    
+    private void processCurrentNumber() {
+        String text = textField.getText();
+        String lastNumber = getLastNumber(text);
+        if (!lastNumber.isEmpty()) {
+            tempOp = Double.parseDouble(lastNumber);
+            state(tempOp);
+        }
+    }
+
+    
+    private void state(double op1) {
+        
+        switch(ch)
+        {
+             case 1:
+                total += tempOp;
+            break;
+            case 2: 
+                total -= tempOp;
+                break;
+            case 3: 
+                total *= tempOp;
+                break;
+            case 4:
+                if (tempOp == 0) {
+                    textField.setText("Error: Division by zero");
+                    total = Double.NaN;
+                }
+                else 
+                    total /= tempOp;
+                
+                
+                break;
+            default:
+                total = tempOp;
+        }
+        
+        ch = 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -44,13 +123,14 @@ public class Calculator extends javax.swing.JFrame {
         jButtonEqual = new javax.swing.JButton();
         jButtonAdd1 = new javax.swing.JButton();
         textField = new javax.swing.JLabel();
+        textField1 = new javax.swing.JLabel();
+        jButton10 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Calculator");
         setMaximizedBounds(new java.awt.Rectangle(0, 0, 400, 530));
         setMaximumSize(new java.awt.Dimension(400, 530));
         setMinimumSize(new java.awt.Dimension(400, 530));
-        setPreferredSize(new java.awt.Dimension(400, 530));
         setResizable(false);
         setSize(new java.awt.Dimension(400, 530));
 
@@ -141,6 +221,11 @@ public class Calculator extends javax.swing.JFrame {
         groupButtons.add(jButton0, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 180, 60));
 
         jButtonDot.setText(".");
+        jButtonDot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDotActionPerformed(evt);
+            }
+        });
         groupButtons.add(jButtonDot, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 260, 90, 60));
 
         jButtonClear.setBackground(new java.awt.Color(255, 111, 0));
@@ -182,6 +267,11 @@ public class Calculator extends javax.swing.JFrame {
 
         jButtonEqual.setBackground(new java.awt.Color(255, 102, 0));
         jButtonEqual.setText("=");
+        jButtonEqual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEqualActionPerformed(evt);
+            }
+        });
         groupButtons.add(jButtonEqual, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 90, 120));
 
         jButtonAdd1.setBackground(new java.awt.Color(0, 150, 136));
@@ -196,20 +286,37 @@ public class Calculator extends javax.swing.JFrame {
         textField.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         textField.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
+        textField1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        textField1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+
+        jButton10.setBackground(new java.awt.Color(255, 111, 0));
+        jButton10.setFont(new java.awt.Font("JetBrains Mono", 0, 12)); // NOI18N
+        jButton10.setText("Convert");
+
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);
         kGradientPanel1Layout.setHorizontalGroup(
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(groupButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
+            .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(textField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(kGradientPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         kGradientPanel1Layout.setVerticalGroup(
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
-                .addGap(0, 137, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jButton10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addComponent(textField1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -272,38 +379,73 @@ public class Calculator extends javax.swing.JFrame {
 
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
         textField.setText("");
+        textField1.setText("");
+        ch = 0;
+        total = 0;
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     private void jButtonAdd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdd1ActionPerformed
         String text = textField.getText();
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
+            processCurrentNumber();
             textField.setText(text + "+");
         }
+        ch = 1;
     }//GEN-LAST:event_jButtonAdd1ActionPerformed
 
     private void jButtonSubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSubActionPerformed
         String text = textField.getText();
         
         if (text.isEmpty() || !isOperator(text.charAt(text.length() - 1))) {
+            processCurrentNumber();
             textField.setText(text + "-");
         } else if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
+            processCurrentNumber();
             textField.setText(text + "-");
         }
+        ch = 2;
     }//GEN-LAST:event_jButtonSubActionPerformed
 
     private void jButtonMulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMulActionPerformed
         String text = textField.getText();
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
+            processCurrentNumber();
             textField.setText(text + "x");
         }
+        ch = 3;
     }//GEN-LAST:event_jButtonMulActionPerformed
 
     private void jButtonDivActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDivActionPerformed
         String text = textField.getText();
         if (!text.isEmpty() && !isOperator(text.charAt(text.length() - 1))) {
+            processCurrentNumber();
             textField.setText(text + "/");
         }
+        ch = 4;
     }//GEN-LAST:event_jButtonDivActionPerformed
+
+    private void jButtonDotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDotActionPerformed
+        String text = textField.getText();
+        if (!text.isEmpty() && isValidForDot(text) && !hasDotInCurrentNumber(text)) {
+            textField.setText(text + ".");
+        }
+    }//GEN-LAST:event_jButtonDotActionPerformed
+
+    private void jButtonEqualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEqualActionPerformed
+        textField1.setForeground(Color.GRAY);
+        textField1.setFont(new Font("Open Sans", Font.BOLD, 24));
+        textField1.setText(textField.getText());
+        processCurrentNumber();
+        
+        if (Double.isNaN(total)) 
+            textField.setText("Error"); 
+        else if (total == (long) total) {
+            textField.setText(String.valueOf((long) total)); 
+        } else {
+            textField.setText(String.valueOf(total));
+        }
+        ch = 0;
+    }//GEN-LAST:event_jButtonEqualActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -327,6 +469,7 @@ public class Calculator extends javax.swing.JFrame {
     private javax.swing.JPanel groupButtons;
     private javax.swing.JButton jButton0;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -344,5 +487,6 @@ public class Calculator extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSub;
     private keeptoo.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel textField;
+    private javax.swing.JLabel textField1;
     // End of variables declaration//GEN-END:variables
 }
